@@ -1,0 +1,24 @@
+{
+  "name": "funny-jump",
+  "version": "1.0.0",
+  "description": "包教不包会，60分钟写个游戏小程序",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cvte-fe/funny-jump.git"
+  },
+  "keywords": [
+    "game",
+    "WeChat applet",
+    "tutorial"
+  ],
+  "author": "JS-Hao sone47",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cvte-fe/funny-jump/issues"
+  },
+  "homepage": "https://github.com/cvte-fe/funny-jump#readme"
+}
