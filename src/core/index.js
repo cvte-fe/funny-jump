@@ -1,11 +1,7 @@
-import Character from './Character';
-import Ground from './Ground';
-import Recorder from './Recorder';
+import app from './app';
 
 const api = {
-  Character,
-  Recorder,
-  Ground
+  app
 };
 
 export default api;

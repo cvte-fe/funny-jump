@@ -16,7 +16,7 @@ class Recorder {
         this.bufferLength = this.analyser.frequencyBinCount;
         this.dataArray = new Uint8Array(this.bufferLength);
 
-        return Promise.resolve();
+        return Promise.resolve(this);
       });
   }
 
