@@ -7,6 +7,7 @@ class App {
     this.distance = 0;
     this.obstacleInterval = 0;
     this.obstacleIntervalImit = this.canvas.width / 2;
+    this.gameOver = false;
 
     this.addObstacle(this.obstacleIntervalImit);
   }
@@ -48,10 +49,18 @@ class App {
     });
   }
 
-  initObstacle(props) {
-    props.img = props.texture;
-    props.y = this.road.y - props.height;
-    this.obstacleProps = props;
+  initObstacle({
+    width,
+    height,
+    texture
+  }) {
+    const newProps = {
+      width,
+      height,
+      y: this.road.y - height,
+      img: texture
+    };
+    this.obstacleProps = newProps;
   }
 
   addObstacle(x) {
@@ -94,7 +103,7 @@ class App {
     });
 
     if (this.isHitObstacle()) {
-      console.log('game over');
+      this.gameOver = true;
     }
   }
 
@@ -103,8 +112,6 @@ class App {
   }
 
   isHitObstacle() {
-    console.log(this.character);
-    console.log(this.obstacles)
     const obstacleWidth = this.obstacleProps.width;
     const obstacleHeight = this.obstacleProps.height;
     const {

@@ -62,5 +62,9 @@ function play() {
   }
   app.render();
 
-  window.requestAnimationFrame(play);
+  if (app.gameOver) {
+    console.log('game over');
+  } else {
+    window.requestAnimationFrame(play);
+  }
 }
