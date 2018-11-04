@@ -60,11 +60,12 @@ function play() {
     const offset = ~~(volume / 10);
     app.move(offset);
   }
-  app.render();
 
-  if (app.gameOver) {
+  if (app.isHitObstacle()) {
     console.log('game over');
   } else {
     window.requestAnimationFrame(play);
   }
+
+  app.render();
 }

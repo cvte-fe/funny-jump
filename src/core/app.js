@@ -7,7 +7,6 @@ class App {
     this.distance = 0;
     this.obstacleInterval = 0;
     this.obstacleIntervalImit = this.canvas.width / 2;
-    this.gameOver = false;
 
     this.addObstacle(this.obstacleIntervalImit);
   }
@@ -81,9 +80,12 @@ class App {
     clearTimeout(this.jumpId);
 
     const originY = this.road.y - this.character.height;
-    this.stage.update('character', 'y', originY - offset);
+    const height = originY - offset;
+    this.stage.update('character', 'y', height);
     this.jumpId = setTimeout(() => {
-      this.stage.update('character', 'y', originY);
+      this._fall(height, originY, y => {
+        this.stage.update('character', 'y', y);
+      });
     }, 10);
   }
 
@@ -104,10 +106,6 @@ class App {
         this.stage.remove(obstacleName);
       }
     });
-
-    if (this.isHitObstacle()) {
-      this.gameOver = true;
-    }
   }
 
   render() {
@@ -127,6 +125,17 @@ class App {
     return this.obstacles.find(pos => {
       return x + width > pos.x && x < pos.x + obstacleWidth && y + height > pos.y && y < pos.y + obstacleHeight;
     });
+  }
+
+  _fall(height, target, fn) {
+    if (height < target) {
+      const speed = Math.ceil((target - height) / 5);
+      height += speed;
+      fn(height);
+      window.requestAnimationFrame(this._fall.bind(this, height, target, fn));
+    } else {
+      fn(target);
+    }
   }
 }
 
