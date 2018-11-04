@@ -50,9 +50,9 @@ function play() {
 
   const volume = app.recorder.getVolume();
 
-  if (volume >= 140) {
+  if (volume >= 120) {
     // jump
-    app.jump(~~(volume / 1.2));
+    app.jump(~~(volume));
   }
 
   if (volume >= 40) {

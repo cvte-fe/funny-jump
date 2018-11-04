@@ -25,6 +25,10 @@ class Stage {
     this.elements[name][key] = value;
   }
 
+  remove(name) {
+    delete this.elements[name];
+  }
+
   render() {
     Object.keys(this.elements).forEach(name => {
       const props = this.elements[name];

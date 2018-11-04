@@ -96,9 +96,12 @@ class App {
       this.obstacleInterval = 0;
     }
     this.obstacles.forEach((pos, i) => {
+      const obstacleName = 'obstacle' + i;
       if (pos.x > -this.obstacleProps.width) {
         pos.x -= offset;
-        this.stage.update('obstacle' + i, 'x', pos.x);
+        this.stage.update(obstacleName, 'x', pos.x);
+      } else {
+        this.stage.remove(obstacleName);
       }
     });
 
