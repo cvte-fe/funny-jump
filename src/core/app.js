@@ -16,7 +16,17 @@ class App {
     return this.recorder.start();
   }
 
-  initBackground() {}
+  initBackground(props) {
+    const newProps = {
+      x: 0,
+      y: 0,
+      width: this.canvas.width,
+      height: this.canvas.width,
+      type: 'image',
+      img: props.texture
+    };
+    this.character = this.stage.add('background', newProps);
+  }
 
   initContainer(stageCanvas, width, height) {
     this.canvas = stageCanvas;
