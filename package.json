@@ -13,7 +13,11 @@
     "type": "git",
     "url": "git+https://github.com/cvte-fe/funny-jump.git"
   },
-  "keywords": ["game", "WeChat applet", "tutorial"],
+  "keywords": [
+    "game",
+    "WeChat applet",
+    "tutorial"
+  ],
   "author": "JS-Hao sone47",
   "license": "ISC",
   "bugs": {

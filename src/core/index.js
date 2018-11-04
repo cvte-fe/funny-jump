@@ -1,9 +1,15 @@
-import sayHello from "./sayHello";
+import Character from './Character';
+import Ground from './Ground';
+import Recorder from './Recorder';
 
 const api = {
-  sayHello
+  Character,
+  Recorder,
+  Ground
 };
 
 export default api;
 
-export { api };
+export {
+  api
+};
