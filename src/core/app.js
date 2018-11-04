@@ -4,9 +4,9 @@ import Recorder from './Recorder';
 class App {
   initGame() {
     this.obstacles = [];
+    this.fall = true;
     this.distance = 0;
     this.obstacleInterval = 0;
-    this.obstacleIntervalImit = this.canvas.width / 2;
 
     this.addObstacle(this.obstacleIntervalImit);
   }
@@ -61,7 +61,8 @@ class App {
   initObstacle({
     width,
     height,
-    texture
+    texture,
+    intervalRange,
   }) {
     const newProps = {
       width,
@@ -70,6 +71,7 @@ class App {
       img: texture
     };
     this.obstacleProps = newProps;
+    this.setObstacleIntervalRange(intervalRange);
   }
 
   addObstacle(x) {
@@ -86,6 +88,10 @@ class App {
     });
   }
 
+  setObstacleIntervalRange(range) {
+    this.obstacleIntervalRange = range;
+  }
+
   jump(offset) {
     clearTimeout(this.jumpId);
 
@@ -93,17 +99,24 @@ class App {
     const height = originY - offset;
     this.stage.update('character', 'y', height);
     this.jumpId = setTimeout(() => {
-      this._fall(height, originY, y => {
-        this.stage.update('character', 'y', y);
-      });
-    }, 10);
+      if (this.fall) {
+        this.fall = false;
+        this._fall(height, originY, y => {
+          this.stage.update('character', 'y', y);
+        }).then(() => {
+          this.fall = true;
+        });
+      }
+    }, 30);
   }
 
   move(offset) {
     this.distance += offset;
     this.obstacleInterval += offset;
 
-    if (this.obstacleInterval > this.obstacleIntervalImit) {
+    const [range1, range2] = this.obstacleIntervalRange;
+    if (this.obstacleInterval >= range2 ||
+      ((Math.random() <= range1 / range2) && this.obstacleInterval >= range1)) {
       this.addObstacle(this.canvas.width);
       this.obstacleInterval = 0;
     }
@@ -138,14 +151,21 @@ class App {
   }
 
   _fall(height, target, fn) {
-    if (height < target) {
-      const speed = Math.ceil((target - height) / 5);
-      height += speed;
-      fn(height);
-      window.requestAnimationFrame(this._fall.bind(this, height, target, fn));
-    } else {
-      fn(target);
-    }
+    return new Promise((resolve) => {
+      const fall = (height, target, fn) => {
+        if (height < target) {
+          const speed = Math.ceil((target - height) / 5);
+          height += speed;
+          fn(height);
+          window.requestAnimationFrame(fall.bind(null, height, target, fn));
+        } else {
+          fn(target);
+          resolve();
+        }
+      };
+
+      fall(height, target, fn);
+    });
   }
 }
 

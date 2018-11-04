@@ -26,6 +26,7 @@ app.initRecorder().then(() => {
     texture: characterTexture,
   });
   app.initObstacle({
+    intervalRange: [400, 800],
     width: 120,
     height: 120,
     texture: obstaclTexture,
