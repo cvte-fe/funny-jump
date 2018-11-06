@@ -26,7 +26,7 @@ app.initRecorder().then(() => {
     texture: characterTexture,
   });
   app.initObstacle({
-    intervalRange: [400, 800],
+    intervalRange: [400, 1000],
     width: 120,
     height: 120,
     texture: obstaclTexture,
@@ -63,7 +63,7 @@ function play() {
   }
 
   if (app.isHitObstacle()) {
-    console.log('game over');
+    alert('game over');
   } else {
     window.requestAnimationFrame(play);
   }

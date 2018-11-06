@@ -4,7 +4,8 @@ import Recorder from './Recorder';
 class App {
   initGame() {
     this.obstacles = [];
-    this.fall = true;
+    this.isFall = true;
+    this.jumpStartTime = 0;
     this.distance = 0;
     this.obstacleInterval = 0;
 
@@ -89,25 +90,42 @@ class App {
   }
 
   setObstacleIntervalRange(range) {
+    if (range[0] > range[1]) {
+      console.warn('[funny-jump] range[0] should less than range[1].You set incorrect range,' + range + '.');
+    }
     this.obstacleIntervalRange = range;
   }
 
   jump(offset) {
-    clearTimeout(this.jumpId);
+    // 计算跳跃持续时间
+    let lastTime = 0;
+    if (this.jumpStartTime === 0) {
+      this.jumpStartTime = Date.now();
+    } else {
+      lastTime = Date.now() - this.jumpStartTime;
+    }
 
-    const originY = this.road.y - this.character.height;
-    const height = originY - offset;
-    this.stage.update('character', 'y', height);
-    this.jumpId = setTimeout(() => {
-      if (this.fall) {
-        this.fall = false;
-        this._fall(height, originY, y => {
-          this.stage.update('character', 'y', y);
-        }).then(() => {
-          this.fall = true;
-        });
-      }
-    }, 30);
+    if (lastTime < 1000 && this.isFall) {
+      clearTimeout(this.jumpId);
+
+      const originY = this.road.y - this.character.height;
+      const height = originY - offset;
+      this._rise(originY, height, y => {
+        this.stage.update('character', 'y', y);
+      }).then(() => {
+        this.jumpId = setTimeout(() => {
+          if (this.isFall) {
+            this.isFall = false;
+            this._fall(height, originY, y => {
+              this.stage.update('character', 'y', y);
+            }).then(() => {
+              this.isFall = true;
+              this.jumpStartTime = 0;
+            });
+          }
+        }, 30);
+      });
+    }
   }
 
   move(offset) {
@@ -150,21 +168,39 @@ class App {
     });
   }
 
-  _fall(height, target, fn) {
+  _rise(height, target, render) {
     return new Promise((resolve) => {
-      const fall = (height, target, fn) => {
+      const rise = (height, target, render) => {
         if (height < target) {
-          const speed = Math.ceil((target - height) / 5);
+          const speed = Math.ceil((target - height) / 3);
           height += speed;
-          fn(height);
-          window.requestAnimationFrame(fall.bind(null, height, target, fn));
+          render(height);
+          window.requestAnimationFrame(rise.bind(null, height, target, render));
         } else {
-          fn(target);
+          render(target);
           resolve();
         }
       };
 
-      fall(height, target, fn);
+      rise(height, target, render);
+    });
+  }
+
+  _fall(height, target, render) {
+    return new Promise((resolve) => {
+      const fall = (height, target, render) => {
+        if (height < target) {
+          const speed = Math.ceil((target - height) / 3);
+          height += speed;
+          render(height);
+          window.requestAnimationFrame(fall.bind(null, height, target, render));
+        } else {
+          render(target);
+          resolve();
+        }
+      };
+
+      fall(height, target, render);
     });
   }
 }
