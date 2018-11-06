@@ -37,6 +37,9 @@ app.initRecorder().then(() => {
 
   app.initGame();
 
+  // add obstacle in the beginning
+  app.addObstacle(stage.width / 2);
+
   play();
 });
 
