@@ -9,7 +9,7 @@
 ### 游戏内容
 
 - 这个一个横版刷分游戏
-  这个游戏有点类似于小时候玩的超级玛丽，我们需要操控马里奥，让他奔跑、跳跃，越过一道又一道的障碍。一旦他触碰到障碍就game over
+  这个游戏有点类似于小时候玩的超级玛丽，我们需要操控马里奥，让他奔跑、跳跃，越过一道又一道的障碍。一旦他触碰到障碍就 game over
 - 利用语音控制。
   当你对准手机呐喊时，手机会接受到你的音量大小并作出相应的反应。喊得越大跳得越高。
 
@@ -33,7 +33,7 @@
 
 ### 开始你的表演
 
-#### 创建html
+#### 创建 html
 
 首先我们先创建项目，项目目录为:
 
@@ -73,8 +73,6 @@ funny-jump
 
 - `index.js` 这是我们发挥的主舞台，我们将在这里实现人生中的第一段 js 代码:)
 
-
-
 #### 游戏设计要素
 
 在创建游戏前我们需要从整体上了解它的设计思路，这对于后续的代码编写非常有好处，你可以清晰的知道现在自己在做什么，以及写的这段代码有什么含义自。
@@ -89,22 +87,20 @@ funny-jump
 
 - 游戏规则
 
-  就是说白了就是游戏玩法，在本游戏中，我们通过呐喊的音量去控制马里奥的行为，当声音到达某一分贝（设为N）的时候，我们让它行走，而超出某一分贝时（设为K），则在行走的同时让它向上跳跃，而一旦马里奥与障碍物有了接触，则游戏失败。整个过程非常简单。
-
-
+  就是说白了就是游戏玩法，在本游戏中，我们通过呐喊的音量去控制马里奥的行为，当声音到达某一分贝（设为 N）的时候，我们让它行走，而超出某一分贝时（设为 K），则在行走的同时让它向上跳跃，而一旦马里奥与障碍物有了接触，则游戏失败。整个过程非常简单。
 
 #### 获取容器与纹理
 
-OK废话讲了一大堆，我们继续，首先我们在`index.js`中写这么一段代码：
+OK 废话讲了一大堆，我们继续，首先我们在`index.js`中写这么一段代码：
 
 ```javascript
 // 物料准备
-const stage = document.querySelector('#stage');
-const characterTexture = createTexture('./images/character.png');
-const obstaclTexture = createTexture('./images/obstacle.png');
+const stage = document.querySelector("#stage");
+const characterTexture = createTexture("./images/character.png");
+const obstaclTexture = createTexture("./images/obstacle.png");
 ```
 
-我们通过`document.querySelector`的方式获取到了html中的id为`stage`的div容器，把它当作游戏的场景。接着就是一些纹理的准备：一般而言每个游戏元素都有着自己的纹理，这样才能体现出它应有的特征，你可以简单理解成游戏角色的皮肤。我们通过`createTexture`这个函数获取到了纹理图片。这个函数的实现方法也非常简单，如下所示：
+我们通过`document.querySelector`的方式获取到了 html 中的 id 为`stage`的 div 容器，把它当作游戏的场景。接着就是一些纹理的准备：一般而言每个游戏元素都有着自己的纹理，这样才能体现出它应有的特征，你可以简单理解成游戏角色的皮肤。我们通过`createTexture`这个函数获取到了纹理图片。这个函数的实现方法也非常简单，如下所示：
 
 ```javascript
 function createTexture(src) {
@@ -114,8 +110,6 @@ function createTexture(src) {
 }
 ```
 
-
-
 #### 创建舞台
 
 接下来继续，我们通过`initRecorder`的方式初始化手机的录音设备，
@@ -124,86 +118,78 @@ function createTexture(src) {
 
 我们通过`initContainer`的方式去创建场景，同时传入了三个参数：刚刚获取的容器、页面宽度与高度。（代码如下）
 
-
-
 #### 创建游戏元素
 
-* 道路 
+- 道路
   通过`initRoad`方法可以创建出道路，它接受两个参数：颜色与高度
 
   ```javascript
   app.initRoad({
-      color: '#090',
-      height: 150,
-    });
+    color: "#090",
+    height: 150
+  });
   ```
 
   ​
 
-* 马里奥
+- 马里奥
 
   ```javascript
   app.initCharacter({
-      x: 100,
-      width: 100,
-      height: 100,
-      texture: characterTexture,
-    });
+    x: 100,
+    width: 100,
+    height: 100,
+    texture: characterTexture
+  });
   ```
 
-  `initCharacter`可用于创建出游戏角色，x代表的是游戏的初始位置（x方向），width和height则是人物的宽高。而texture就使用了上面所创建的人物纹理`characterTexture`
+  `initCharacter`可用于创建出游戏角色，x 代表的是游戏的初始位置（x 方向），width 和 height 则是人物的宽高。而 texture 就使用了上面所创建的人物纹理`characterTexture`
 
-* 障碍物
+- 障碍物
 
   ```javascript
   app.initObstacle({
-  	intervalRange: [400, 800],
-  	width: 120,
-  	height: 120,
-  	texture: obstaclTexture,
+    intervalRange: [400, 800],
+    width: 120,
+    height: 120,
+    texture: obstaclTexture
   });
   ```
 
   `intervalRange`表示的是每隔多少长度出现一个障碍物，这增加了游戏的随机性，剩余后三个参数不用说，值得一提的是我们这里使用了`obstaclTexture`这个纹理。
 
-
-
 所有的构建代码如下所示：
 
 ```javascript
-const {
-  app
-} = api;
+const { app } = api;
 
 // 初始化 Audio
 app.initRecorder().then(() => {
-
-
   // 初始化游戏舞台
   app.initContainer(stage, window.innerWidth, window.innerHeight);
 
   // 道路
   app.initRoad({
-    color: '#090',
-    height: 150,
+    color: "#090",
+    height: 150
   });
-    
+
   // 马里奥
   app.initCharacter({
     x: 100,
     width: 100,
     height: 100,
-    texture: characterTexture,
+    texture: characterTexture
   });
-    
+
   // 障碍物
   app.initObstacle({
     intervalRange: [400, 800],
     width: 120,
     height: 120,
-    texture: obstaclTexture,
+    texture: obstaclTexture
   });
-    
+
   app.initGame();
   play();
 });
@@ -223,7 +209,7 @@ function play() {
 
   if (volume >= 120) {
     // jump
-    app.jump(~~(volume));
+    app.jump(~~volume);
   }
 
   if (volume >= 40) {
@@ -233,7 +219,7 @@ function play() {
   }
 
   if (app.isHitObstacle()) {
-  	alert('game over');
+    alert("game over");
   } else {
     window.requestAnimationFrame(play);
   }
@@ -244,16 +230,14 @@ function play() {
 
 既然要“逐帧”播放图片，那怎么从一张图片切换到另一张图片呢？方法很简单，我们先渲染出游戏场景，然后等待下一个周期的到来，下一个周期到来后我们把整个容器的内容给擦除清空，再根据当前的操控指令重新渲染游戏场景，再继续等待下一个周期的到来……以此类推，反复下去。
 
-
-
-因此在`play`函数中要做的第一件事就是清空整个容器内容，然后通过`app.recorder.getVolume()`获取我们实时呐喊的音量大小，接着我们做了两个判断：当音量大于等于40分贝的时候，我们让马里奥行走。而大于120的时候，我们不仅让他行走，还让他向前跳跃，跳跃这个动作通过`app.jump(~~(volume))`完成。
-
-
+因此在`play`函数中要做的第一件事就是清空整个容器内容，然后通过`app.recorder.getVolume()`获取我们实时呐喊的音量大小，接着我们做了两个判断：当音量大于等于 40 分贝的时候，我们让马里奥行走。而大于 120 的时候，我们不仅让他行走，还让他向前跳跃，跳跃这个动作通过`app.jump(~~(volume))`完成。
 
 这还没完，我们还需要判断马里奥是否撞到了障碍物呢，接着我们通过`app.isHitObstacle()`判断马里奥与障碍物是否有“身体接触”，有则弹出“game over”
 
-
-
-然后我们通过`window.requestAnimationFrame(play)`去循环执行play函数，这个api很有趣，它的作用是，向`window.requestAnimationFrame`方法传入一个指定的回调函数，当浏览器空闲的时候，就会去执行指定它，恰好我们是把`window.requestAnimationFrame`放在了递归调用里，因此它就可以无限循环下去。
+然后我们通过`window.requestAnimationFrame(play)`去循环执行 play 函数，这个 api 很有趣，它的作用是，向`window.requestAnimationFrame`方法传入一个指定的回调函数，当浏览器空闲的时候，就会去执行指定它，恰好我们是把`window.requestAnimationFrame`放在了递归调用里，因此它就可以无限循环下去。
 
 最后通过调用`app.render`函数，我们就可以看到场景上渲染出想要的内容啦。
+
+1. 基础准备 坚果云、node（window、mac）、webpack、git、sublime 广杰
+2. 游戏优化 肖男(干掉 alert)
+3. 美琪 (写 ppt)

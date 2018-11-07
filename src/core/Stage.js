@@ -1,6 +1,6 @@
 class Stage {
   static defaultProps = {
-    type: '',
+    type: "",
     x: 0,
     y: 0,
     width: 0,
@@ -12,7 +12,7 @@ class Stage {
     canvas.height = height;
 
     this.canvas = canvas;
-    this.context = canvas.getContext('2d');
+    this.context = canvas.getContext("2d");
     this.elements = {};
   }
 
@@ -32,18 +32,28 @@ class Stage {
   render() {
     Object.keys(this.elements).forEach(name => {
       const props = this.elements[name];
-      const {
-        type
-      } = props;
+      const { type } = props;
       switch (type) {
-        case 'image':
+        case "image":
           this._addImage(props);
           break;
-        case 'rect':
+        case "rect":
           this._addRect(props);
           break;
       }
     });
+  }
+
+  alertGameover(text) {
+    const canvas = this.canvas;
+    this.context.font = "80px Arial";
+    this.context.fillStyle = "red";
+    const textWidth = this.context.measureText(text).width;
+    this.context.fillText(
+      text,
+      canvas.width / 2 - textWidth / 2,
+      canvas.height / 3
+    );
   }
 
   clean() {
@@ -52,13 +62,11 @@ class Stage {
   }
 
   _addImage(props) {
-    const {
-      x,
-      y,
-      width,
-      height,
-      img
-    } = Object.assign({}, Stage.defaultProps, props);
+    const { x, y, width, height, img } = Object.assign(
+      {},
+      Stage.defaultProps,
+      props
+    );
     img.width = width;
     img.height = height;
 
@@ -66,13 +74,11 @@ class Stage {
   }
 
   _addRect(props) {
-    const {
-      x,
-      y,
-      width,
-      height,
-      color,
-    } = Object.assign({}, Stage.defaultProps, props);
+    const { x, y, width, height, color } = Object.assign(
+      {},
+      Stage.defaultProps,
+      props
+    );
 
     this.context.fillStyle = color;
     this.context.fillRect(x, y, width, height);
