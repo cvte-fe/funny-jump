@@ -19,12 +19,13 @@ class App {
 
   initBackground(props) {
     const { texture } = props;
-    const ratio = texture.height / texture.width;
+    const ratio = texture.width / texture.height;
+    const tempWidth = this.canvas.height * ratio;
     const newProps = {
       x: 0,
       y: 0,
-      width: this.canvas.width,
-      height: this.canvas.width * ratio,
+      width: tempWidth < this.canvas.width ? this.canvas.width : tempWidth,
+      height: this.canvas.height,
       type: "image",
       img: props.texture
     };

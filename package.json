@@ -4,7 +4,7 @@
   "description": "包教不包会，60分钟写个游戏小程序",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server --devtool eval-source-map --progress --colors --hot --inline --content-base ./dist",
+    "start": "webpack-dev-server --devtool eval-source-map --progress --colors --hot --inline --content-base ./dist",
     "build": "babel src --out-dir build",
     "dist": "webpack",
     "test": "jest"
@@ -13,11 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/cvte-fe/funny-jump.git"
   },
-  "keywords": [
-    "game",
-    "WeChat applet",
-    "tutorial"
-  ],
+  "keywords": ["game", "WeChat applet", "tutorial"],
   "author": "JS-Hao sone47",
   "license": "ISC",
   "bugs": {

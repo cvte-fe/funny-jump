@@ -4,8 +4,6 @@ const characterTexture = createTexture("./images/character.png");
 const obstaclTexture = createTexture("./images/obstacle.png");
 const bkTexture = createTexture("./images/background.jpg");
 
-const { app } = api;
-
 // 初始化 Audio
 app.initRecorder().then(() => {
   // 初始化游戏舞台

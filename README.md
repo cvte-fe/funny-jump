@@ -21,47 +21,60 @@
 
 ### 学前准备
 
-在开始本课程前，请确保你的电脑安装了编辑器，下面两个任选一个安装即可：
+- Node.js
+
+可到[这里](https://nodejs.org/zh-cn/)下载最新版本的 Node.js
+
+- IDE
+
+请确保你的电脑安装了编辑器，下面两个任选一个安装即可
 
 - [sublime](https://www.sublimetext.com/)
 - [vscode](https://code.visualstudio.com/)
 
-### 基础知识
-
-- 基础前端知识[https://www.cnblogs.com/dreamingbaobei/p/5062901.html]
-- 该游戏的实现思路[]
-
 ### 开始你的表演
 
-#### 创建 html
+#### 安装并运行
 
-首先我们先创建项目，项目目录为:
+首先我们得先确保项目是否能正常运行，在命令行输入如下指令，将仓库克隆到本地：
 
 ```
-funny-jump
-
- - index.html
- - index.js
- - reset.css
+git clone https://github.com/cvte-fe/funny-jump.git
 ```
 
-[ 这里介绍什么是 html、css、 js, 以及它们的特点与关系 ]
+安装并运行：
 
-首先我们先创建一个 html 文本，内容如下:
+```
+npm install
+```
+
+```
+npm run start
+```
+
+正常运行后，在浏览器输入`localhost:9000`，打开控制台，看看是否有报错，无没有则说明运行成功，我们继续~
+
+#### 目录结构介绍
+
+打开目录`src/index.html`文件
 
 ```html
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>funny jump</title>
-    <link rel="stylesheet" type="text/css" href="./reset.css" />
-  </head>
-  <body>
-    <div id="stage"></div>
-    <script src="core.js"></script>
-    <script src="index.js"></script>
-  </body>
+
+<head>
+  <meta charset="utf-8">
+  <title>funny jump</title>
+  <link rel="stylesheet" type="text/css" href="./reset.css">
+</head>
+
+<body>
+  <canvas id="stage"></canvas>
+  <script src="core.js"></script>
+  <script src="index.js"></script>
+</body>
+
 </html>
 ```
 
@@ -91,13 +104,15 @@ funny-jump
 
 #### 获取容器与纹理
 
-OK 废话讲了一大堆，我们继续，首先我们在`index.js`中写这么一段代码：
+OK 废话讲了一大堆，我们继续，首先我们打开`src/index.js`，在里面写这么一段代码：
 
 ```javascript
 // 物料准备
 const stage = document.querySelector("#stage");
+// 人物、障碍物及背景皮肤
 const characterTexture = createTexture("./images/character.png");
 const obstaclTexture = createTexture("./images/obstacle.png");
+const bkTexture = createTexture("./images/background.jpg");
 ```
 
 我们通过`document.querySelector`的方式获取到了 html 中的 id 为`stage`的 div 容器，把它当作游戏的场景。接着就是一些纹理的准备：一般而言每个游戏元素都有着自己的纹理，这样才能体现出它应有的特征，你可以简单理解成游戏角色的皮肤。我们通过`createTexture`这个函数获取到了纹理图片。这个函数的实现方法也非常简单，如下所示：
@@ -112,13 +127,62 @@ function createTexture(src) {
 
 #### 创建舞台
 
-接下来继续，我们通过`initRecorder`的方式初始化手机的录音设备，
+所有的构建代码如下所示：
+
+```javascript
+// 初始化 Audio
+app.initRecorder().then(() => {
+  // 初始化游戏舞台
+  app.initContainer(stage, window.innerWidth, window.innerHeight);
+  app.initBackground({
+    texture: bkTexture
+  });
+  app.initRoad({
+    color: "#090",
+    height: 50
+  });
+  app.initCharacter({
+    x: 100,
+    width: 100,
+    height: 100,
+    texture: characterTexture
+  });
+  app.initObstacle({
+    intervalRange: [600, 1200],
+    width: 50,
+    height: 100,
+    texture: obstaclTexture
+  });
+
+  app.initGame();
+
+  // add obstacle in the beginning
+  app.addObstacle(stage.width / 2);
+
+  play();
+});
+```
+
+首先，我们通过`initRecorder`的方式初始化手机的录音设备，
 
 由于它是一个异步方法，所以我们只能通过往`then`方法传入回调的形式来继续下面的流程。
 
-我们通过`initContainer`的方式去创建场景，同时传入了三个参数：刚刚获取的容器、页面宽度与高度。（代码如下）
+我们通过`initContainer`的方式去创建场景，同时传入了三个参数：刚刚获取的容器、页面宽度与高度:
+
+```javascript
+app.initContainer(stage, window.innerWidth, window.innerHeight);
+```
 
 #### 创建游戏元素
+
+- 背景
+  `initBackground`可创建背景
+
+  ```javascript
+  app.initBackground({
+    texture: bkTexture
+  });
+  ```
 
 - 道路
   通过`initRoad`方法可以创建出道路，它接受两个参数：颜色与高度
@@ -126,7 +190,7 @@ function createTexture(src) {
   ```javascript
   app.initRoad({
     color: "#090",
-    height: 150
+    height: 50
   });
   ```
 
@@ -149,55 +213,18 @@ function createTexture(src) {
 
   ```javascript
   app.initObstacle({
-    intervalRange: [400, 800],
-    width: 120,
-    height: 120,
+    intervalRange: [600, 1200],
+    width: 50,
+    height: 100,
     texture: obstaclTexture
   });
   ```
 
   `intervalRange`表示的是每隔多少长度出现一个障碍物，这增加了游戏的随机性，剩余后三个参数不用说，值得一提的是我们这里使用了`obstaclTexture`这个纹理。
 
-所有的构建代码如下所示：
+#### 让游戏跑起来
 
-```javascript
-const { app } = api;
-
-// 初始化 Audio
-app.initRecorder().then(() => {
-  // 初始化游戏舞台
-  app.initContainer(stage, window.innerWidth, window.innerHeight);
-
-  // 道路
-  app.initRoad({
-    color: "#090",
-    height: 150
-  });
-
-  // 马里奥
-  app.initCharacter({
-    x: 100,
-    width: 100,
-    height: 100,
-    texture: characterTexture
-  });
-
-  // 障碍物
-  app.initObstacle({
-    intervalRange: [400, 800],
-    width: 120,
-    height: 120,
-    texture: obstaclTexture
-  });
-
-  app.initGame();
-  play();
-});
-```
-
-可以看到最后我们还加了两个函数`initGame`和`play`
-
-前者用于初始化整个游戏，后者则是启动游戏，并让它循环运行整个游戏，敲重点，这可是整个游戏能否顺利运行的关键！
+可以看到最后我们还加了两个函数`initGame`和`play`，前者用于初始化整个游戏，后者则是启动游戏，并让它循环运行整个游戏，敲重点，这可是整个游戏能否顺利运行的关键！
 
 为何怎么说？首先我们需要明白游戏是怎么运行起来的，它的原理有点类似于视频，视频里面的人物之所以能够“动”起来，是因为它是逐帧逐帧地播放图片，由于人眼视觉暂留的影响，导致觉得它在动。游戏也是类似的，只不过人物该怎么运动交给我们自己去控制罢了。接下来我们看看`play`具体怎么实现：
 
@@ -207,116 +234,104 @@ function play() {
 
   const volume = app.recorder.getVolume();
 
-  if (volume >= 120) {
+  if (volume >= 90) {
     // jump
-    app.jump(~~volume);
+    app.jump(~~volume * 1.5);
   }
 
-  if (volume >= 40) {
+  if (volume >= 70) {
     // run
     const offset = ~~(volume / 10);
     app.move(offset);
   }
-
+  app.render();
   if (app.isHitObstacle()) {
-    alert("game over");
+    app.alertGameover();
   } else {
     window.requestAnimationFrame(play);
   }
-
-  app.render();
 }
 ```
 
-既然要“逐帧”播放图片，那怎么从一张图片切换到另一张图片呢？方法很简单，我们先渲染出游戏场景，然后等待下一个周期的到来，下一个周期到来后我们把整个容器的内容给擦除清空，再根据当前的操控指令重新渲染游戏场景，再继续等待下一个周期的到来……以此类推，反复下去。
+既然要“逐帧”播放图片，那怎么从一张图片切换到另一张图片呢？方法很简单，我们先渲染出游戏场景，然后等待下一个周期的到来，下一个周期到来后我们把整个容器的内容给擦除清空，再根据当前的操控指令重新计算渲染游戏场景，再继续等待下一个周期的到来……以此类推，反复下去。
 
-因此在`play`函数中要做的第一件事就是清空整个容器内容，然后通过`app.recorder.getVolume()`获取我们实时呐喊的音量大小，接着我们做了两个判断：当音量大于等于 40 分贝的时候，我们让马里奥行走。而大于 120 的时候，我们不仅让他行走，还让他向前跳跃，跳跃这个动作通过`app.jump(~~(volume))`完成。
+因此在`play`函数中要做的第一件事就是清空整个容器内容（这里调用了`app.stage.clean`），然后通过`app.recorder.getVolume()`获取我们实时呐喊的音量大小，接着我们做了两个判断：当音量大于等于 70 分贝的时候，我们让马里奥行走。而大于 90 的时候，我们不仅让他行走，还让他向前跳跃，跳跃这个动作通过`app.jump(~~(volume))`完成，然后通过`app.render`将计算后的结果绘制到场景里。
 
-这还没完，我们还需要判断马里奥是否撞到了障碍物呢，接着我们通过`app.isHitObstacle()`判断马里奥与障碍物是否有“身体接触”，有则弹出“game over”
+这还没完，我们还需要判断马里奥是否撞到了障碍物呢，接着我们通过`app.isHitObstacle`判断马里奥与障碍物是否有“身体接触”，有则调用`app.alertGameover`方法提示游戏结束。
 
-然后我们通过`window.requestAnimationFrame(play)`去循环执行 play 函数，这个 api 很有趣，它的作用是，向`window.requestAnimationFrame`方法传入一个指定的回调函数，当浏览器空闲的时候，就会去执行指定它，恰好我们是把`window.requestAnimationFrame`放在了递归调用里，因此它就可以无限循环下去。
+接着我们通过`window.requestAnimationFrame(play)`去循环执行 play 函数，这个 api 很有趣，它的作用是，向`window.requestAnimationFrame`方法传入一个指定的回调函数，当浏览器空闲的时候，就会去执行指定它，恰好我们是把`window.requestAnimationFrame`放在了递归调用里，因此它就可以无限循环下去。
 
-最后通过调用`app.render`函数，我们就可以看到场景上渲染出想要的内容啦。
+代码写完啦，现在我们再看看浏览器，看看你的马里奥是否能够运行吧！
 
-### SDK
+学完不烦点个 star 再走噢~😆
 
-#### initRecorder
+### 附录完整代码
 
-开启录音，获得声音频率，用来分析声音。
+```javascript
+// 物料准备
+const stage = document.querySelector("#stage");
+const characterTexture = createTexture("./images/character.png");
+const obstaclTexture = createTexture("./images/obstacle.png");
+const bkTexture = createTexture("./images/background.jpg");
 
-#### initContainer
+// 初始化 Audio
+app.initRecorder().then(() => {
+  // 初始化游戏舞台
+  app.initContainer(stage, window.innerWidth, window.innerHeight);
+  app.initBackground({
+    texture: bkTexture
+  });
+  app.initRoad({
+    color: "#090",
+    height: 50
+  });
+  app.initCharacter({
+    x: 100,
+    width: 100,
+    height: 100,
+    texture: characterTexture
+  });
+  app.initObstacle({
+    intervalRange: [600, 1200],
+    width: 50,
+    height: 100,
+    texture: obstaclTexture
+  });
 
-初始化游戏舞台。
+  app.initGame();
 
-- canvas[ElemenetDom]: 用于渲染的画布
-- width[number]: 画布宽度
-- height[number]: 画布高度
+  // add obstacle in the beginning
+  app.addObstacle(stage.width / 2);
 
-#### initBackground
+  play();
+});
 
-初始化游戏背景。
+function createTexture(src) {
+  const img = new Image();
+  img.src = src;
+  return img;
+}
 
-- attrs[obeject]: 背景参数
-  - texture[Image]: 背景图
+function play() {
+  app.stage.clean();
 
-#### initRoad
+  const volume = app.recorder.getVolume();
 
-初始化道路。
+  if (volume >= 90) {
+    // jump
+    app.jump(~~volume * 1.5);
+  }
 
-- attrs[object]: 道路参数
-  - corlor[string]: 道路颜色
-  - height[number]: 道路距离屏幕底部的高度，即道路的高度
-
-#### initCharacter
-
-初始化游戏人物。
-
-- attrs[object]: 人物参数
-  - x[number]: 人物与屏幕左侧的距离
-  - width[number]: 人物渲染的宽度
-  - height[number]: 人物渲染的高度
-  - texture[Image]: 人物纹理
-
-#### initObstacle
-
-初始化游戏障碍物。
-
-- x[number]: 障碍物与屏幕左侧的距离
-
-- attrs[object]: 障碍物参数
-  - intervalRange[array]: 相邻障碍物的距离范围，intervalRange[0] ~ intervalRange [1]
-  - width[number]: 障碍物渲染的宽度
-  - height[number]: 障碍物渲染的高度
-  - texture[Image]: 障碍物纹理
-
-#### addObstacle
-
-增加障碍物。
-
-#### initGame
-
-游戏数据初始化。
-
-#### jump
-
-控制人物跳跃。
-
-- height[number]: 跳跃高度
-
-#### move
-
-控制场景移动。
-
-- offset[number]: 移动距离
-
-#### render
-
-渲染画布。
-
-#### isHitObstacle
-
-碰撞检测，判断人物是否撞到障碍物。
-
-#### alertGameover
-
-渲染游戏结束提示。
+  if (volume >= 70) {
+    // run
+    const offset = ~~(volume / 10);
+    app.move(offset);
+  }
+  app.render();
+  if (app.isHitObstacle()) {
+    app.alertGameover();
+  } else {
+    window.requestAnimationFrame(play);
+  }
+}
+```

@@ -1,11 +1,5 @@
-import app from './app';
+import app from "./app";
 
-const api = {
-  app
-};
+export default app;
 
-export default api;
-
-export {
-  api
-};
+export { app };
